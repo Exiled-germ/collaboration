@@ -123,9 +123,18 @@ const Index = () => {
               PhaseFlow
             </h1>
           </div>
-          <p className="text-muted-foreground text-lg">
+          <p className="text-muted-foreground text-lg mb-4">
             AI 기반 실시간 협업 캔버스 - 최적의 동료를 자동으로 찾아드립니다
           </p>
+          <div className="flex justify-center gap-4">
+            <a
+              href="/dashboard"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity font-semibold"
+            >
+              <Sparkles className="w-5 h-5" />
+              v2.0 Live Dashboard 보기
+            </a>
+          </div>
         </div>
 
         {/* Main Content Grid */}

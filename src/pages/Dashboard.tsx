@@ -6,7 +6,8 @@ import ArtifactUpload from "@/components/dashboard/ArtifactUpload";
 import AIInvites from "@/components/dashboard/AIInvites";
 import PhaseRefinePanel from "@/components/dashboard/PhaseRefinePanel";
 import PhaseDetailDialog from "@/components/dashboard/PhaseDetailDialog";
-import { Sparkles, Users } from "lucide-react";
+import WaitlistDialog from "@/components/dashboard/WaitlistDialog";
+import { Sparkles, Users, Rocket } from "lucide-react";
 
 export interface Phase {
   id: string;
@@ -75,6 +76,7 @@ const Dashboard = () => {
   const [isRefining, setIsRefining] = useState(false);
   const [selectedPhase, setSelectedPhase] = useState<Phase | null>(null);
   const [isPhaseDialogOpen, setIsPhaseDialogOpen] = useState(false);
+  const [isWaitlistDialogOpen, setIsWaitlistDialogOpen] = useState(false);
   const { toast } = useToast();
 
   // Load project data from sessionStorage on mount
@@ -200,13 +202,21 @@ const Dashboard = () => {
               </div>
             </div>
             <div className="flex items-center gap-2">
+              <button
+                onClick={() => setIsWaitlistDialogOpen(true)}
+                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-primary to-accent hover:opacity-90 text-white rounded-lg transition-opacity shadow-[var(--shadow-medium)]"
+                title="Join our waitlist for better product"
+              >
+                <Rocket className="w-5 h-5" />
+                <span className="hidden sm:inline">Join Waitlist</span>
+              </button>
               <a
                 href="/"
                 className="flex items-center gap-2 px-4 py-2 bg-muted hover:bg-muted/80 text-foreground rounded-lg transition-colors border border-border"
-                title="프로젝트 및 팀원 정보 수정"
+                title="Edit project and team info"
               >
                 <Users className="w-5 h-5" />
-                <span className="hidden sm:inline">프로젝트 수정</span>
+                <span className="hidden sm:inline">Edit Project</span>
               </a>
             </div>
           </div>
@@ -230,6 +240,12 @@ const Dashboard = () => {
               onClose={() => setIsPhaseDialogOpen(false)}
               feedItems={feedItems}
               invites={invites}
+            />
+
+            {/* Waitlist Dialog */}
+            <WaitlistDialog
+              isOpen={isWaitlistDialogOpen}
+              onClose={() => setIsWaitlistDialogOpen(false)}
             />
 
             {/* Phase Refine Panel */}

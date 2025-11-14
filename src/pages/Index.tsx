@@ -70,8 +70,8 @@ const Index = () => {
         console.error("Logout error:", error);
       }
       toast({
-        title: "로그아웃 실패",
-        description: "다시 시도해주세요.",
+        title: "Sign Out Failed",
+        description: "Please try again.",
         variant: "destructive",
       });
     }

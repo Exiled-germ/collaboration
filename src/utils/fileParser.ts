@@ -2,8 +2,8 @@ import * as pdfjsLib from 'pdfjs-dist';
 import mammoth from 'mammoth';
 import JSZip from 'jszip';
 
-// PDF.js worker 설정
-pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
+// PDF.js worker 설정 - Vite 환경에서는 worker를 disable하고 사용
+pdfjsLib.GlobalWorkerOptions.workerSrc = '';
 
 export async function parseFile(file: File): Promise<string> {
   const fileType = file.type;
@@ -44,7 +44,12 @@ export async function parseFile(file: File): Promise<string> {
 
 async function parsePDF(file: File): Promise<string> {
   const arrayBuffer = await file.arrayBuffer();
-  const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+  const pdf = await pdfjsLib.getDocument({ 
+    data: arrayBuffer,
+    useWorkerFetch: false,
+    isEvalSupported: false,
+    useSystemFonts: true,
+  }).promise;
   
   let fullText = '';
   for (let i = 1; i <= pdf.numPages; i++) {

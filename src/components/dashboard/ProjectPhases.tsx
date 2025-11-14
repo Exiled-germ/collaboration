@@ -4,9 +4,10 @@ import type { Phase } from "@/pages/Dashboard";
 
 interface ProjectPhasesProps {
   phases: Phase[];
+  onPhaseClick: (phase: Phase) => void;
 }
 
-const ProjectPhases = ({ phases }: ProjectPhasesProps) => {
+const ProjectPhases = ({ phases, onPhaseClick }: ProjectPhasesProps) => {
   const getInitials = (name: string) => {
     return name.split(" ")[0].charAt(0);
   };
@@ -17,16 +18,20 @@ const ProjectPhases = ({ phases }: ProjectPhasesProps) => {
         <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
           <Users className="w-5 h-5 text-primary" />
         </div>
-        <h2 className="text-xl font-semibold text-foreground">Project Phase Status</h2>
+        <div>
+          <h2 className="text-xl font-semibold text-foreground">Project Phase Status</h2>
+          <p className="text-xs text-muted-foreground">Click any phase to view detailed activity</p>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
         {phases.map((phase) => (
           <div
             key={phase.id}
-            className="bg-muted/30 border border-border rounded-lg p-4 hover:shadow-[var(--shadow-soft)] transition-shadow"
+            onClick={() => onPhaseClick(phase)}
+            className="bg-muted/30 border border-border rounded-lg p-4 hover:shadow-[var(--shadow-soft)] hover:border-primary/30 transition-all cursor-pointer group"
           >
-            <h3 className="font-semibold text-foreground mb-3 pb-2 border-b border-primary/20">
+            <h3 className="font-semibold text-foreground mb-3 pb-2 border-b border-primary/20 group-hover:text-primary transition-colors">
               {phase.name}
             </h3>
             

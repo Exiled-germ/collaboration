@@ -179,14 +179,16 @@ const Dashboard = () => {
                 <p className="text-muted-foreground">Live Dashboard - 실시간 협업 허브</p>
               </div>
             </div>
-            <a
-              href="/"
-              className="flex items-center gap-2 px-4 py-2 bg-secondary hover:bg-secondary/80 text-secondary-foreground rounded-lg transition-colors"
-              title="새 프로젝트 생성"
-            >
-              <Users className="w-5 h-5" />
-              <span className="hidden sm:inline">새 프로젝트</span>
-            </a>
+            <div className="flex items-center gap-2">
+              <a
+                href="/"
+                className="flex items-center gap-2 px-4 py-2 bg-muted hover:bg-muted/80 text-foreground rounded-lg transition-colors border border-border"
+                title="프로젝트 및 팀원 정보 수정"
+              >
+                <Users className="w-5 h-5" />
+                <span className="hidden sm:inline">프로젝트 수정</span>
+              </a>
+            </div>
           </div>
           <p className="text-lg text-foreground font-medium">
             {projectData?.project_name || "프로젝트를 생성해주세요"}

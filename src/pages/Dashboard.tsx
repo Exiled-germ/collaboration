@@ -4,6 +4,7 @@ import { useToast } from "@/hooks/use-toast";
 import ProjectPhases from "@/components/dashboard/ProjectPhases";
 import ArtifactUpload from "@/components/dashboard/ArtifactUpload";
 import AIInvites from "@/components/dashboard/AIInvites";
+import PhaseRefinePanel from "@/components/dashboard/PhaseRefinePanel";
 import { Sparkles, Users } from "lucide-react";
 
 export interface Phase {
@@ -70,6 +71,7 @@ const Dashboard = () => {
   const [invites, setInvites] = useState<AIInvite[]>([]);
   const [feedItems, setFeedItems] = useState<FeedItem[]>([]);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [isRefining, setIsRefining] = useState(false);
   const { toast } = useToast();
 
   // Load project data from sessionStorage on mount
@@ -156,6 +158,16 @@ const Dashboard = () => {
     }
   };
 
+  const handleApplyRefinedProject = (refinedProject: ProjectData) => {
+    setProjectData(refinedProject);
+    sessionStorage.setItem('phaseflow_project', JSON.stringify(refinedProject));
+    
+    toast({
+      title: "Phase 구조 업데이트 완료",
+      description: "새로운 Phase 구조가 적용되었습니다.",
+    });
+  };
+
   // Convert phases array to Record for ArtifactUpload component
   const phasesRecord: Record<string, Phase> = {};
   projectData?.phases.forEach(phase => {
@@ -202,6 +214,17 @@ const Dashboard = () => {
           <>
             {/* Project Phases */}
             <ProjectPhases phases={projectData.phases} />
+
+            {/* Phase Refine Panel */}
+            <div className="mt-6">
+              <PhaseRefinePanel
+                currentProject={projectData}
+                profiles={profiles}
+                onApplyChanges={handleApplyRefinedProject}
+                isRefining={isRefining}
+                setIsRefining={setIsRefining}
+              />
+            </div>
 
             {/* Main Content Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">

@@ -45,28 +45,28 @@ const DEFAULT_PROFILES = `#### [Team Member Profiles]
     * **Career:** "Led 0→1 product planning 3 times at previous startups. Led B2C app growth from 100K→500K MAU."
 
 * **Alex (Marketer):**
-    * **Email:** "alex.marketing@example.com"
+    * **Email:** "ldw9710@yonsei.ac.kr"
     * **Loves:** "Growth hacking, A/B test design, viral meme planning, short and impactful copywriting."
     * **Hates:** "Writing long emotional blog posts, SEO optimization, detailed data analysis (SQL)."
     * **Tools:** "Google Ads, Facebook Ads, TikTok Ads, Canva, CapCut"
     * **Career:** "Planned 5 viral campaigns over the past 2 years (average 200% user growth)."
 
 * **Robin (Backend/AI Developer):**
-    * **Email:** "robin.backend@example.com"
+    * **Email:** "ldw9710@yonsei.ac.kr"
     * **Loves:** "Reading and applying new AI/LLM papers, designing complex backend architecture, Python/Go, system optimization."
     * **Hates:** "Frontend work (CSS, JS) at all, simple CRUD API development, starting development with unclear planning."
     * **Tools:** "Python, Go, PyTorch, FastAPI, Docker, Kubernetes, PostgreSQL"
     * **Career:** "3 years at AI startup. Built GPT-4 based chatbot system (handling 100K requests/day)."
 
 * **Jay (Frontend Developer):**
-    * **Email:** "jay.frontend@example.com"
+    * **Email:** "ldw9710@yonsei.ac.kr"
     * **Loves:** "Building interactive UIs, CSS animations, web performance optimization, React/Vue."
     * **Hates:** "Database design, AI model serving, infrastructure (AWS) work."
     * **Tools:** "React, Next.js, TypeScript, Tailwind CSS, Framer Motion, GSAP"
     * **Career:** "5 years frontend. Improved landing page conversion by 30%. Created React open-source library."
 
 * **Sarah (Designer/UX Researcher):**
-    * **Email:** "sarah.design@example.com"
+    * **Email:** "ldw9710@yonsei.ac.kr"
     * **Loves:** "Creating prototypes in Figma, conducting usability tests (UT), turning complex policies into simple UX flows."
     * **Hates:** "Image retouching, icon creation and other graphic design, CSS pixel modification requests during development."
     * **Tools:** "Figma, Sketch, Miro, Maze, UserTesting, Hotjar"

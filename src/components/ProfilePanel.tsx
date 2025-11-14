@@ -18,7 +18,7 @@ const ProfilePanel = ({ profiles, setProfiles }: ProfilePanelProps) => {
       </div>
       
       <p className="text-sm text-muted-foreground mb-4">
-        Enter your team member profiles. Include Email for AI invitations, plus Loves, Hates, Tools, and Career info.
+        Enter team member profiles with <strong>Email</strong>, Loves, Hates, Tools, and Career info for AI invitations.
       </p>
       
       <div className="mb-4 p-3 bg-muted/50 rounded-lg border border-border">

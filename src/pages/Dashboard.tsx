@@ -38,35 +38,30 @@ export interface FeedItem {
 const DEFAULT_PROFILES = `#### [Team Member Profiles]
 
 * **David (CPO/Product):**
-    * **Email:** "ldw9710@yonsei.ac.kr"
     * **Loves:** "User interviews, competitive analysis, defining product 'Why', GTM strategy."
     * **Hates:** "Writing detailed PRDs for pre-decided features, pixel-perfect UI reviews, repetitive project management."
     * **Tools:** "Notion, Figma, Miro, Google Analytics, Mixpanel, Amplitude"
     * **Career:** "Led 0→1 product planning 3 times at previous startups. Led B2C app growth from 100K→500K MAU."
 
 * **Alex (Marketer):**
-    * **Email:** "ldw9710@yonsei.ac.kr"
     * **Loves:** "Growth hacking, A/B test design, viral meme planning, short and impactful copywriting."
     * **Hates:** "Writing long emotional blog posts, SEO optimization, detailed data analysis (SQL)."
     * **Tools:** "Google Ads, Facebook Ads, TikTok Ads, Canva, CapCut"
     * **Career:** "Planned 5 viral campaigns over the past 2 years (average 200% user growth)."
 
 * **Robin (Backend/AI Developer):**
-    * **Email:** "ldw9710@yonsei.ac.kr"
     * **Loves:** "Reading and applying new AI/LLM papers, designing complex backend architecture, Python/Go, system optimization."
     * **Hates:** "Frontend work (CSS, JS) at all, simple CRUD API development, starting development with unclear planning."
     * **Tools:** "Python, Go, PyTorch, FastAPI, Docker, Kubernetes, PostgreSQL"
     * **Career:** "3 years at AI startup. Built GPT-4 based chatbot system (handling 100K requests/day)."
 
 * **Jay (Frontend Developer):**
-    * **Email:** "ldw9710@yonsei.ac.kr"
     * **Loves:** "Building interactive UIs, CSS animations, web performance optimization, React/Vue."
     * **Hates:** "Database design, AI model serving, infrastructure (AWS) work."
     * **Tools:** "React, Next.js, TypeScript, Tailwind CSS, Framer Motion, GSAP"
     * **Career:** "5 years frontend. Improved landing page conversion by 30%. Created React open-source library."
 
 * **Sarah (Designer/UX Researcher):**
-    * **Email:** "ldw9710@yonsei.ac.kr"
     * **Loves:** "Creating prototypes in Figma, conducting usability tests (UT), turning complex policies into simple UX flows."
     * **Hates:** "Image retouching, icon creation and other graphic design, CSS pixel modification requests during development."
     * **Tools:** "Figma, Sketch, Miro, Maze, UserTesting, Hotjar"
@@ -87,10 +82,11 @@ const Dashboard = () => {
   // Load project data from sessionStorage on mount
   useEffect(() => {
     const storedProject = sessionStorage.getItem('phaseflow_project');
+    const storedProfiles = sessionStorage.getItem('phaseflow_profiles');
     
-    // Always use the latest DEFAULT_PROFILES with emails
-    setProfiles(DEFAULT_PROFILES);
-    sessionStorage.setItem('phaseflow_profiles', DEFAULT_PROFILES);
+    if (storedProfiles) {
+      setProfiles(storedProfiles);
+    }
     
     if (storedProject) {
       try {
@@ -148,15 +144,10 @@ const Dashboard = () => {
       if (data && Array.isArray(data)) {
         setInvites(prev => [...data, ...prev]);
         
-        // Send email invites
-        if (data.length > 0) {
-          sendEmailInvites(data, phaseName);
-        }
-        
         toast({
           title: "Analysis complete",
           description: data.length > 0 
-            ? `${data.length} AI invite(s) generated and emails sent!`
+            ? `${data.length} AI invite(s) generated!`
             : "No next-step collaboration needed.",
         });
       }
@@ -180,50 +171,6 @@ const Dashboard = () => {
       title: "Phase structure updated",
       description: "New phase structure has been applied.",
     });
-  };
-
-  const sendEmailInvites = async (invites: AIInvite[], phaseName: string) => {
-    // Parse profiles to extract emails
-    const emailMap = new Map<string, string>();
-    const lines = profiles.split('\n');
-    let currentName = '';
-    
-    for (const line of lines) {
-      // Match name patterns like "* **Name (Role):**"
-      const nameMatch = line.match(/\*\s*\*\*([^(]+)\s*\(/);
-      if (nameMatch) {
-        currentName = nameMatch[1].trim();
-      }
-      
-      // Match email patterns like '* **Email:** "email@example.com"'
-      const emailMatch = line.match(/\*\s*\*\*Email:\*\*\s*"([^"]+)"/);
-      if (emailMatch && currentName) {
-        emailMap.set(currentName, emailMatch[1]);
-      }
-    }
-    
-    // Send emails for each invite
-    for (const invite of invites) {
-      const email = emailMap.get(invite.target_user);
-      if (email) {
-        try {
-          await supabase.functions.invoke("send-invite-email", {
-            body: {
-              recipientEmail: email,
-              recipientName: invite.target_user,
-              inviteMessage: invite.invite_message,
-              reason: invite.reason,
-              phaseName: phaseName,
-            },
-          });
-          console.log(`Email sent to ${invite.target_user} at ${email}`);
-        } catch (error) {
-          console.error(`Failed to send email to ${invite.target_user}:`, error);
-        }
-      } else {
-        console.log(`No email found for ${invite.target_user}`);
-      }
-    }
   };
 
   const handlePhaseClick = (phase: Phase) => {

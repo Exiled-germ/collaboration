@@ -1,20 +1,11 @@
-import * as pdfjsLib from 'pdfjs-dist';
 import mammoth from 'mammoth';
 import JSZip from 'jszip';
-
-// PDF.js worker 설정 - Vite 환경에서는 worker를 disable하고 사용
-pdfjsLib.GlobalWorkerOptions.workerSrc = '';
 
 export async function parseFile(file: File): Promise<string> {
   const fileType = file.type;
   const fileName = file.name.toLowerCase();
 
   try {
-    // PDF 파일
-    if (fileType === 'application/pdf' || fileName.endsWith('.pdf')) {
-      return await parsePDF(file);
-    }
-    
     // Word 문서 (DOCX)
     if (fileType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' || fileName.endsWith('.docx')) {
       return await parseDOCX(file);
@@ -40,28 +31,6 @@ export async function parseFile(file: File): Promise<string> {
     console.error('파일 파싱 오류:', error);
     throw error;
   }
-}
-
-async function parsePDF(file: File): Promise<string> {
-  const arrayBuffer = await file.arrayBuffer();
-  const pdf = await pdfjsLib.getDocument({ 
-    data: arrayBuffer,
-    useWorkerFetch: false,
-    isEvalSupported: false,
-    useSystemFonts: true,
-  }).promise;
-  
-  let fullText = '';
-  for (let i = 1; i <= pdf.numPages; i++) {
-    const page = await pdf.getPage(i);
-    const textContent = await page.getTextContent();
-    const pageText = textContent.items
-      .map((item: any) => item.str)
-      .join(' ');
-    fullText += `\n\n[Page ${i}]\n${pageText}`;
-  }
-  
-  return fullText.trim();
 }
 
 async function parseDOCX(file: File): Promise<string> {

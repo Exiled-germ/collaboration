@@ -5,7 +5,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Card } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Sparkles, Rocket, Users } from "lucide-react";
+import { Sparkles, Rocket, Users, LogOut } from "lucide-react";
 
 const DEFAULT_PROFILES = `#### [Team Member Profiles]
 
@@ -61,6 +61,22 @@ const Index = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
 
+  const handleLogout = async () => {
+    try {
+      await supabase.auth.signOut();
+      navigate("/auth");
+    } catch (error) {
+      if (import.meta.env.DEV) {
+        console.error("Logout error:", error);
+      }
+      toast({
+        title: "로그아웃 실패",
+        description: "다시 시도해주세요.",
+        variant: "destructive",
+      });
+    }
+  };
+
   const handleAnalyze = async () => {
     if (!projectDescription.trim() || !profiles.trim()) {
       toast({
@@ -114,21 +130,28 @@ const Index = () => {
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-8 text-center">
-          <div className="flex items-center justify-center gap-3 mb-3">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-[var(--shadow-medium)]">
-              <Sparkles className="w-6 h-6 text-white" />
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-[var(--shadow-medium)]">
+                <Sparkles className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                  PhaseFlow v2.0
+                </h1>
+                <p className="text-muted-foreground">AI-Powered Project Phase Designer</p>
+              </div>
             </div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              PhaseFlow
-            </h1>
+            <Button
+              onClick={handleLogout}
+              variant="outline"
+              className="flex items-center gap-2"
+            >
+              <LogOut className="w-4 h-4" />
+              로그아웃
+            </Button>
           </div>
-          <p className="text-muted-foreground text-lg mb-2">
-            AI가 프로젝트를 분석하여 최적의 Phase와 팀원을 자동 배치합니다
-          </p>
-          <p className="text-sm text-muted-foreground">
-            프로젝트를 설명하면, AI가 성공을 위한 로드맵을 자동으로 설계합니다
-          </p>
         </div>
 
         {/* Main Content Grid */}

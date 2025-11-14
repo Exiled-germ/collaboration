@@ -1,12 +1,14 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
 import ProjectPhases from "@/components/dashboard/ProjectPhases";
 import ArtifactUpload from "@/components/dashboard/ArtifactUpload";
 import AIInvites from "@/components/dashboard/AIInvites";
 import PhaseRefinePanel from "@/components/dashboard/PhaseRefinePanel";
 import PhaseDetailDialog from "@/components/dashboard/PhaseDetailDialog";
-import { Sparkles, Users } from "lucide-react";
+import { Sparkles, Users, LogOut } from "lucide-react";
 
 export interface Phase {
   id: string;
@@ -76,6 +78,23 @@ const Dashboard = () => {
   const [selectedPhase, setSelectedPhase] = useState<Phase | null>(null);
   const [isPhaseDialogOpen, setIsPhaseDialogOpen] = useState(false);
   const { toast } = useToast();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      await supabase.auth.signOut();
+      navigate("/auth");
+    } catch (error) {
+      if (import.meta.env.DEV) {
+        console.error("Logout error:", error);
+      }
+      toast({
+        title: "로그아웃 실패",
+        description: "다시 시도해주세요.",
+        variant: "destructive",
+      });
+    }
+  };
 
   // Load project data from sessionStorage on mount
   useEffect(() => {
@@ -204,6 +223,14 @@ const Dashboard = () => {
               </div>
             </div>
             <div className="flex items-center gap-2">
+              <Button
+                onClick={handleLogout}
+                variant="outline"
+                className="flex items-center gap-2"
+              >
+                <LogOut className="w-4 h-4" />
+                <span className="hidden sm:inline">로그아웃</span>
+              </Button>
               <a
                 href="/"
                 className="flex items-center gap-2 px-4 py-2 bg-muted hover:bg-muted/80 text-foreground rounded-lg transition-colors border border-border"

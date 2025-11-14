@@ -198,7 +198,7 @@ const Dashboard = () => {
                 <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
                   PhaseFlow v2.0
                 </h1>
-                <p className="text-muted-foreground">Live Dashboard - 실시간 협업 허브</p>
+                <p className="text-muted-foreground">Live Dashboard - Real-time Collaboration Hub</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
@@ -221,7 +221,7 @@ const Dashboard = () => {
             </div>
           </div>
           <p className="text-lg text-foreground font-medium">
-            {projectData?.project_name || "프로젝트를 생성해주세요"}
+            {projectData?.project_name || "Please create a project"}
           </p>
           {projectData?.project_summary && (
             <p className="text-sm text-muted-foreground mt-1">{projectData.project_summary}</p>

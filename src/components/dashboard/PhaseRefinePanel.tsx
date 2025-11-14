@@ -50,7 +50,9 @@ const PhaseRefinePanel = ({
         setShowPreview(true);
       }
     } catch (error) {
-      console.error("Phase 구조 개선 실패:", error);
+      if (import.meta.env.DEV) {
+        console.error("Phase 구조 개선 실패:", error);
+      }
     } finally {
       setIsRefining(false);
     }

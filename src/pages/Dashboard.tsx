@@ -187,6 +187,26 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-[1600px] mx-auto">
+        {/* Waitlist Banner */}
+        <div className="mb-6 bg-gradient-to-r from-primary/10 via-accent/10 to-primary/10 border border-primary/20 rounded-xl p-4 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-[var(--shadow-soft)]">
+              <Sparkles className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-foreground">Like our MVP? Join waitlist for better product!</p>
+              <p className="text-xs text-muted-foreground">Be the first to know when we launch new features</p>
+            </div>
+          </div>
+          <button
+            onClick={() => setIsWaitlistDialogOpen(true)}
+            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-primary to-accent hover:opacity-90 text-white rounded-lg transition-opacity font-semibold shadow-[var(--shadow-medium)] whitespace-nowrap"
+          >
+            <Sparkles className="w-4 h-4" />
+            Join Now
+          </button>
+        </div>
+
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-3">

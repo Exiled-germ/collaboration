@@ -1,11 +1,17 @@
 import mammoth from 'mammoth';
 import JSZip from 'jszip';
+import { supabase } from '@/integrations/supabase/client';
 
 export async function parseFile(file: File): Promise<string> {
   const fileType = file.type;
   const fileName = file.name.toLowerCase();
 
   try {
+    // PDF 파일 - Backend에서 처리
+    if (fileType === 'application/pdf' || fileName.endsWith('.pdf')) {
+      return await parsePDFViaBackend(file);
+    }
+    
     // Word 문서 (DOCX)
     if (fileType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' || fileName.endsWith('.docx')) {
       return await parseDOCX(file);
@@ -31,6 +37,26 @@ export async function parseFile(file: File): Promise<string> {
     console.error('파일 파싱 오류:', error);
     throw error;
   }
+}
+
+async function parsePDFViaBackend(file: File): Promise<string> {
+  // PDF를 Base64로 인코딩
+  const arrayBuffer = await file.arrayBuffer();
+  const base64 = btoa(
+    new Uint8Array(arrayBuffer).reduce((data, byte) => data + String.fromCharCode(byte), '')
+  );
+
+  // Backend로 전송하여 파싱
+  const { data, error } = await supabase.functions.invoke('parse-pdf', {
+    body: {
+      file_base64: base64,
+      file_name: file.name,
+    }
+  });
+
+  if (error) throw error;
+  
+  return data.text || `PDF 파일: ${file.name}`;
 }
 
 async function parseDOCX(file: File): Promise<string> {

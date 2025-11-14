@@ -5,6 +5,7 @@ import ProjectPhases from "@/components/dashboard/ProjectPhases";
 import ArtifactUpload from "@/components/dashboard/ArtifactUpload";
 import AIInvites from "@/components/dashboard/AIInvites";
 import PhaseRefinePanel from "@/components/dashboard/PhaseRefinePanel";
+import PhaseDetailDialog from "@/components/dashboard/PhaseDetailDialog";
 import { Sparkles, Users } from "lucide-react";
 
 export interface Phase {
@@ -72,6 +73,8 @@ const Dashboard = () => {
   const [feedItems, setFeedItems] = useState<FeedItem[]>([]);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [isRefining, setIsRefining] = useState(false);
+  const [selectedPhase, setSelectedPhase] = useState<Phase | null>(null);
+  const [isPhaseDialogOpen, setIsPhaseDialogOpen] = useState(false);
   const { toast } = useToast();
 
   // Load project data from sessionStorage on mount
@@ -168,6 +171,11 @@ const Dashboard = () => {
     });
   };
 
+  const handlePhaseClick = (phase: Phase) => {
+    setSelectedPhase(phase);
+    setIsPhaseDialogOpen(true);
+  };
+
   // Convert phases array to Record for ArtifactUpload component
   const phasesRecord: Record<string, Phase> = {};
   projectData?.phases.forEach(phase => {
@@ -213,7 +221,16 @@ const Dashboard = () => {
         {projectData ? (
           <>
             {/* Project Phases */}
-            <ProjectPhases phases={projectData.phases} />
+            <ProjectPhases phases={projectData.phases} onPhaseClick={handlePhaseClick} />
+
+            {/* Phase Detail Dialog */}
+            <PhaseDetailDialog
+              phase={selectedPhase}
+              isOpen={isPhaseDialogOpen}
+              onClose={() => setIsPhaseDialogOpen(false)}
+              feedItems={feedItems}
+              invites={invites}
+            />
 
             {/* Phase Refine Panel */}
             <div className="mt-6">

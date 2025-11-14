@@ -18,8 +18,19 @@ const ProfilePanel = ({ profiles, setProfiles }: ProfilePanelProps) => {
       </div>
       
       <p className="text-sm text-muted-foreground mb-4">
-        팀원들의 Loves(좋아하는 일)와 Hates(싫어하는 일)를 입력하세요.
+        팀원들의 프로필을 입력하세요. Loves, Hates, Tools, Career 정보를 포함하면 더 정확한 추천을 받을 수 있습니다.
       </p>
+      
+      <div className="mb-4 p-3 bg-muted/50 rounded-lg border border-border">
+        <p className="text-xs font-semibold text-foreground mb-2">프로필 구조 예시:</p>
+        <div className="text-xs font-mono text-muted-foreground space-y-1">
+          <div>* **이름 (역할):**</div>
+          <div className="ml-3">* **Loves:** "좋아하는 일"</div>
+          <div className="ml-3">* **Hates:** "싫어하는 일"</div>
+          <div className="ml-3">* **Tools:** "사용 가능한 도구"</div>
+          <div className="ml-3">* **Career:** "경력과 작업물"</div>
+        </div>
+      </div>
       
       <Textarea
         value={profiles}

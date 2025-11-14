@@ -129,7 +129,7 @@ const Index = () => {
         {/* Main Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Project Description */}
-          <Card className="flex flex-col p-6 bg-card border-border shadow-[var(--shadow-medium)]">
+          <Card className="flex flex-col p-6 bg-card border-border shadow-[var(--shadow-medium)] min-h-[600px]">
             <div className="flex items-center gap-3 mb-4 pb-4 border-b border-border">
               <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
                 <Rocket className="w-5 h-5 text-primary" />
@@ -144,13 +144,13 @@ const Index = () => {
             <Textarea
               value={projectDescription}
               onChange={(e) => setProjectDescription(e.target.value)}
-              className="flex-1 font-mono text-sm resize-none border-input focus:ring-2 focus:ring-primary/20"
+              className="flex-1 min-h-[400px] font-mono text-sm resize-none border-input focus:ring-2 focus:ring-primary/20"
               placeholder="프로젝트를 설명해주세요..."
             />
           </Card>
 
           {/* Team Profiles */}
-          <Card className="flex flex-col p-6 bg-card border-border shadow-[var(--shadow-medium)]">
+          <Card className="flex flex-col p-6 bg-card border-border shadow-[var(--shadow-medium)] min-h-[600px]">
             <div className="flex items-center gap-3 mb-4 pb-4 border-b border-border">
               <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center">
                 <Users className="w-5 h-5 text-accent" />
@@ -165,7 +165,7 @@ const Index = () => {
             <Textarea
               value={profiles}
               onChange={(e) => setProfiles(e.target.value)}
-              className="flex-1 font-mono text-sm resize-none border-input focus:ring-2 focus:ring-accent/20"
+              className="flex-1 min-h-[400px] font-mono text-sm resize-none border-input focus:ring-2 focus:ring-accent/20"
               placeholder="팀원 프로필을 입력하세요..."
             />
           </Card>

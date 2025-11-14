@@ -18,13 +18,14 @@ const ProfilePanel = ({ profiles, setProfiles }: ProfilePanelProps) => {
       </div>
       
       <p className="text-sm text-muted-foreground mb-4">
-        Enter your team member profiles. Include Loves, Hates, Tools, and Career info for more accurate recommendations.
+        Enter your team member profiles. Include Email for AI invitations, plus Loves, Hates, Tools, and Career info.
       </p>
       
       <div className="mb-4 p-3 bg-muted/50 rounded-lg border border-border">
         <p className="text-xs font-semibold text-foreground mb-2">Profile Structure Example:</p>
         <div className="text-xs font-mono text-muted-foreground space-y-1">
           <div>* **Name (Role):**</div>
+          <div className="ml-3">* **Email:** "their.email@example.com"</div>
           <div className="ml-3">* **Loves:** "What they love to do"</div>
           <div className="ml-3">* **Hates:** "What they hate to do"</div>
           <div className="ml-3">* **Tools:** "Tools they can use"</div>
@@ -36,7 +37,13 @@ const ProfilePanel = ({ profiles, setProfiles }: ProfilePanelProps) => {
         value={profiles}
         onChange={(e) => setProfiles(e.target.value)}
         className="flex-1 font-mono text-sm resize-none border-input focus:ring-2 focus:ring-primary/20"
-        placeholder="Enter team member profiles..."
+        placeholder='Example:
+* **John Doe (Developer):**
+    * **Email:** "ldw9710@yonsei.ac.kr"
+    * **Loves:** "Building APIs"
+    * **Hates:** "CSS debugging"
+    * **Tools:** "React, Node.js"
+    * **Career:** "5 years fullstack"'
       />
     </Card>
   );

@@ -23,66 +23,51 @@ serve(async (req) => {
       );
     }
 
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!LOVABLE_API_KEY) {
-      throw new Error("LOVABLE_API_KEY is not configured");
-    }
-
     console.log(`Processing PDF: ${file_name}`);
 
-    // Gemini AI에게 PDF 분석 요청
-    const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${LOVABLE_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'google/gemini-2.5-flash',
-        messages: [
-          {
-            role: 'user',
-            content: [
-              {
-                type: 'text',
-                text: '이 PDF 문서의 모든 텍스트 내용을 추출해주세요. 제목, 본문, 표, 리스트 등 모든 텍스트를 포함하되, 원본의 구조와 포맷을 최대한 유지해주세요. 한글과 영어 모두 정확하게 추출해주세요.'
-              },
-              {
-                type: 'file',
-                data: file_base64,
-                mimeType: 'application/pdf'
-              }
-            ]
-          }
-        ],
-      }),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error("AI gateway error:", response.status, errorText);
-      
-      if (response.status === 429) {
-        return new Response(
-          JSON.stringify({ error: "요청 한도 초과. 잠시 후 다시 시도해주세요." }),
-          { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
-      
-      if (response.status === 402) {
-        return new Response(
-          JSON.stringify({ error: "크레딧 부족. Lovable AI 크레딧을 충전해주세요." }),
-          { status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
-      
-      throw new Error(`AI gateway error: ${response.status}`);
+    // Base64를 바이너리로 변환
+    const binaryString = atob(file_base64);
+    const bytes = new Uint8Array(binaryString.length);
+    for (let i = 0; i < binaryString.length; i++) {
+      bytes[i] = binaryString.charCodeAt(i);
     }
 
-    const data = await response.json();
-    const extractedText = data.choices[0].message.content;
+    // PDF에서 간단한 텍스트 추출 시도
+    const text = new TextDecoder('utf-8', { fatal: false }).decode(bytes);
     
-    console.log("PDF text extracted successfully");
+    // PDF 내부의 텍스트 객체 추출
+    const textMatches = text.match(/\(([^)]+)\)/g);
+    const tjMatches = text.match(/\[([^\]]+)\]/g);
+    
+    let extractedText = `[PDF 파일: ${file_name}]\n\n`;
+    
+    if (textMatches && textMatches.length > 0) {
+      const texts = textMatches
+        .map(match => match.slice(1, -1))
+        .filter(t => t.length > 2 && /[\uAC00-\uD7A3a-zA-Z0-9]/.test(t))
+        .map(t => t.replace(/\\n/g, '\n').replace(/\\r/g, ''))
+        .join(' ');
+      
+      extractedText += texts;
+    }
+    
+    if (tjMatches && tjMatches.length > 0) {
+      const additionalTexts = tjMatches
+        .map(match => match.slice(1, -1))
+        .filter(t => t.length > 2 && /[\uAC00-\uD7A3a-zA-Z0-9]/.test(t))
+        .join(' ');
+      
+      if (additionalTexts) {
+        extractedText += '\n\n' + additionalTexts;
+      }
+    }
+
+    // 추출된 텍스트가 너무 적으면 안내 메시지 추가
+    if (extractedText.length < 100) {
+      extractedText += '\n\n[자동 추출이 어려운 PDF 형식입니다. 문서의 주요 내용을 직접 입력해주세요.]';
+    }
+    
+    console.log(`PDF processing completed. Extracted ${extractedText.length} characters`);
 
     return new Response(
       JSON.stringify({ text: extractedText }),

@@ -87,7 +87,10 @@ const Dashboard = () => {
   // Load project data from sessionStorage on mount
   useEffect(() => {
     const storedProject = sessionStorage.getItem('phaseflow_project');
-    const storedProfiles = sessionStorage.getItem('phaseflow_profiles');
+    
+    // Always use the latest DEFAULT_PROFILES with emails
+    setProfiles(DEFAULT_PROFILES);
+    sessionStorage.setItem('phaseflow_profiles', DEFAULT_PROFILES);
     
     if (storedProject) {
       try {
@@ -95,18 +98,6 @@ const Dashboard = () => {
         setProjectData(parsed);
       } catch (error) {
         console.error("Error parsing project data:", error);
-      }
-    }
-    
-    // Check if stored profiles have email field, if not, reset to default
-    if (storedProfiles) {
-      const hasEmail = storedProfiles.includes('**Email:**');
-      if (!hasEmail) {
-        // Old format detected, reset to new default with emails
-        setProfiles(DEFAULT_PROFILES);
-        sessionStorage.setItem('phaseflow_profiles', DEFAULT_PROFILES);
-      } else {
-        setProfiles(storedProfiles);
       }
     }
   }, []);

@@ -91,7 +91,9 @@ const Dashboard = () => {
         const parsed = JSON.parse(storedProject);
         setProjectData(parsed);
       } catch (error) {
-        console.error("Error parsing project data:", error);
+        if (import.meta.env.DEV) {
+          console.error("Error parsing project data:", error);
+        }
       }
     }
   }, []);
@@ -150,7 +152,9 @@ const Dashboard = () => {
         });
       }
     } catch (error) {
-      console.error("Error analyzing artifact:", error);
+      if (import.meta.env.DEV) {
+        console.error("Error analyzing artifact:", error);
+      }
       toast({
         title: "Error occurred",
         description: error instanceof Error ? error.message : "An error occurred during analysis.",

@@ -97,7 +97,9 @@ const Index = () => {
         navigate('/dashboard');
       }
     } catch (error) {
-      console.error("Error analyzing project:", error);
+      if (import.meta.env.DEV) {
+        console.error("Error analyzing project:", error);
+      }
       toast({
         title: "Error occurred",
         description: error instanceof Error ? error.message : "An error occurred during analysis.",

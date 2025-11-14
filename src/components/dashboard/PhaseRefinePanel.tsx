@@ -122,17 +122,17 @@ const PhaseRefinePanel = ({
             
             <div className="space-y-3">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">프로젝트 이름</p>
+                <p className="text-sm font-medium text-muted-foreground">Project Name</p>
                 <p className="text-base text-foreground">{previewProject?.project_name}</p>
               </div>
               
               <div>
-                <p className="text-sm font-medium text-muted-foreground">프로젝트 요약</p>
+                <p className="text-sm font-medium text-muted-foreground">Project Summary</p>
                 <p className="text-base text-foreground">{previewProject?.project_summary}</p>
               </div>
 
               <div>
-                <p className="text-sm font-medium text-muted-foreground mb-2">Phase 목록</p>
+                <p className="text-sm font-medium text-muted-foreground mb-2">Phase List</p>
                 <div className="space-y-2">
                   {previewProject?.phases.map((phase, idx) => (
                     <div key={phase.id} className="bg-background/50 p-3 rounded-lg">
@@ -141,7 +141,7 @@ const PhaseRefinePanel = ({
                       </p>
                       <p className="text-sm text-muted-foreground mt-1">{phase.description}</p>
                       <p className="text-xs text-primary mt-2">
-                        추천: {phase.recommended.join(', ')}
+                        Recommended: {phase.recommended.join(', ')}
                       </p>
                     </div>
                   ))}
@@ -155,14 +155,14 @@ const PhaseRefinePanel = ({
               onClick={handleApply}
               className="flex-1 bg-success hover:bg-success/90 text-white"
             >
-              ✅ 이 구조로 적용하기
+              ✅ Apply This Structure
             </Button>
             <Button
               onClick={handleCancel}
               variant="outline"
               className="flex-1"
             >
-              취소
+              Cancel
             </Button>
           </div>
         </div>

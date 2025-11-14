@@ -17,18 +17,18 @@ const WorkCanvas = ({ workContent, setWorkContent, onAnalyze, isLoading }: WorkC
         <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center">
           <FileEdit className="w-5 h-5 text-accent" />
         </div>
-        <h2 className="text-xl font-semibold text-foreground">실시간 작업 캔버스</h2>
+        <h2 className="text-xl font-semibold text-foreground">Real-time Work Canvas</h2>
       </div>
       
       <p className="text-sm text-muted-foreground mb-4">
-        현재 작업 중인 내용을 입력하세요. AI가 최적의 협업자를 추천합니다.
+        Enter your current work. AI will recommend the best collaborators.
       </p>
       
       <Textarea
         value={workContent}
         onChange={(e) => setWorkContent(e.target.value)}
         className="flex-1 min-h-[200px] font-mono text-sm resize-none border-input focus:ring-2 focus:ring-accent/20 mb-4"
-        placeholder="작업 내용을 입력하세요..."
+        placeholder="Enter your work in progress..."
       />
       
       <Button 
@@ -39,12 +39,12 @@ const WorkCanvas = ({ workContent, setWorkContent, onAnalyze, isLoading }: WorkC
         {isLoading ? (
           <>
             <Sparkles className="w-5 h-5 mr-2 animate-pulse" />
-            AI 분석 중...
+            Analyzing with AI...
           </>
         ) : (
           <>
             <Sparkles className="w-5 h-5 mr-2" />
-            PhaseFlow: 실시간 협업 분석!
+            PhaseFlow: Analyze Collaboration!
           </>
         )}
       </Button>

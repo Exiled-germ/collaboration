@@ -46,20 +46,20 @@ const NotificationPanel = ({ notifications, isLoading }: NotificationPanelProps)
         <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
           <Bell className="w-5 h-5 text-primary" />
         </div>
-        <h2 className="text-xl font-semibold text-foreground">AI 자동 알림</h2>
+        <h2 className="text-xl font-semibold text-foreground">AI Auto Notifications</h2>
       </div>
 
       {isLoading ? (
         <div className="flex items-center justify-center py-12">
           <div className="flex flex-col items-center gap-3">
             <div className="w-12 h-12 rounded-full bg-gradient-to-r from-primary to-accent animate-pulse" />
-            <p className="text-sm text-muted-foreground">AI가 분석 중입니다...</p>
+            <p className="text-sm text-muted-foreground">AI is analyzing...</p>
           </div>
         </div>
       ) : notifications.length === 0 ? (
         <div className="flex items-center justify-center py-12">
           <p className="text-sm text-muted-foreground">
-            작업 내용을 분석하면 알림이 여기에 표시됩니다.
+            Analyze work content to see notifications here.
           </p>
         </div>
       ) : (

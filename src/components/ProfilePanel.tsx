@@ -14,21 +14,21 @@ const ProfilePanel = ({ profiles, setProfiles }: ProfilePanelProps) => {
         <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
           <Users className="w-5 h-5 text-primary" />
         </div>
-        <h2 className="text-xl font-semibold text-foreground">팀원 프로필 DB</h2>
+        <h2 className="text-xl font-semibold text-foreground">Team Member Profiles</h2>
       </div>
       
       <p className="text-sm text-muted-foreground mb-4">
-        팀원들의 프로필을 입력하세요. Loves, Hates, Tools, Career 정보를 포함하면 더 정확한 추천을 받을 수 있습니다.
+        Enter your team member profiles. Include Loves, Hates, Tools, and Career info for more accurate recommendations.
       </p>
       
       <div className="mb-4 p-3 bg-muted/50 rounded-lg border border-border">
-        <p className="text-xs font-semibold text-foreground mb-2">프로필 구조 예시:</p>
+        <p className="text-xs font-semibold text-foreground mb-2">Profile Structure Example:</p>
         <div className="text-xs font-mono text-muted-foreground space-y-1">
-          <div>* **이름 (역할):**</div>
-          <div className="ml-3">* **Loves:** "좋아하는 일"</div>
-          <div className="ml-3">* **Hates:** "싫어하는 일"</div>
-          <div className="ml-3">* **Tools:** "사용 가능한 도구"</div>
-          <div className="ml-3">* **Career:** "경력과 작업물"</div>
+          <div>* **Name (Role):**</div>
+          <div className="ml-3">* **Loves:** "What they love to do"</div>
+          <div className="ml-3">* **Hates:** "What they hate to do"</div>
+          <div className="ml-3">* **Tools:** "Tools they can use"</div>
+          <div className="ml-3">* **Career:** "Experience and portfolio"</div>
         </div>
       </div>
       
@@ -36,7 +36,7 @@ const ProfilePanel = ({ profiles, setProfiles }: ProfilePanelProps) => {
         value={profiles}
         onChange={(e) => setProfiles(e.target.value)}
         className="flex-1 font-mono text-sm resize-none border-input focus:ring-2 focus:ring-primary/20"
-        placeholder="팀원 프로필을 입력하세요..."
+        placeholder="Enter team member profiles..."
       />
     </Card>
   );

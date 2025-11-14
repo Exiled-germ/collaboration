@@ -30,8 +30,8 @@ const Auth = () => {
     
     if (!email || !password) {
       toast({
-        title: "입력 필요",
-        description: "이메일과 비밀번호를 입력해주세요.",
+        title: "Input Required",
+        description: "Please enter your email and password.",
         variant: "destructive",
       });
       return;
@@ -39,8 +39,8 @@ const Auth = () => {
 
     if (password.length < 6) {
       toast({
-        title: "비밀번호 오류",
-        description: "비밀번호는 최소 6자 이상이어야 합니다.",
+        title: "Password Error",
+        description: "Password must be at least 6 characters.",
         variant: "destructive",
       });
       return;
@@ -62,8 +62,8 @@ const Auth = () => {
       if (error) {
         if (error.message.includes("already registered")) {
           toast({
-            title: "이미 가입된 이메일",
-            description: "이 이메일은 이미 사용 중입니다. 로그인해주세요.",
+            title: "Email Already Registered",
+            description: "This email is already in use. Please sign in.",
             variant: "destructive",
           });
         } else {
@@ -71,8 +71,8 @@ const Auth = () => {
         }
       } else {
         toast({
-          title: "회원가입 성공!",
-          description: "자동으로 로그인되었습니다.",
+          title: "Sign Up Successful!",
+          description: "You have been automatically signed in.",
         });
         navigate("/");
       }
@@ -81,8 +81,8 @@ const Auth = () => {
         console.error("Signup error:", error);
       }
       toast({
-        title: "회원가입 실패",
-        description: error instanceof Error ? error.message : "회원가입 중 오류가 발생했습니다.",
+        title: "Sign Up Failed",
+        description: error instanceof Error ? error.message : "An error occurred during sign up.",
         variant: "destructive",
       });
     } finally {
@@ -95,8 +95,8 @@ const Auth = () => {
     
     if (!email || !password) {
       toast({
-        title: "입력 필요",
-        description: "이메일과 비밀번호를 입력해주세요.",
+        title: "Input Required",
+        description: "Please enter your email and password.",
         variant: "destructive",
       });
       return;
@@ -113,8 +113,8 @@ const Auth = () => {
       if (error) {
         if (error.message.includes("Invalid login credentials")) {
           toast({
-            title: "로그인 실패",
-            description: "이메일 또는 비밀번호가 올바르지 않습니다.",
+            title: "Sign In Failed",
+            description: "Email or password is incorrect.",
             variant: "destructive",
           });
         } else {
@@ -122,8 +122,8 @@ const Auth = () => {
         }
       } else {
         toast({
-          title: "로그인 성공!",
-          description: "환영합니다.",
+          title: "Sign In Successful!",
+          description: "Welcome back.",
         });
         navigate("/");
       }
@@ -132,8 +132,8 @@ const Auth = () => {
         console.error("Login error:", error);
       }
       toast({
-        title: "로그인 실패",
-        description: error instanceof Error ? error.message : "로그인 중 오류가 발생했습니다.",
+        title: "Sign In Failed",
+        description: error instanceof Error ? error.message : "An error occurred during sign in.",
         variant: "destructive",
       });
     } finally {
@@ -155,14 +155,14 @@ const Auth = () => {
 
         <Tabs defaultValue="signin" className="w-full">
           <TabsList className="grid w-full grid-cols-2 mb-6">
-            <TabsTrigger value="signin">로그인</TabsTrigger>
-            <TabsTrigger value="signup">회원가입</TabsTrigger>
+            <TabsTrigger value="signin">Sign In</TabsTrigger>
+            <TabsTrigger value="signup">Sign Up</TabsTrigger>
           </TabsList>
 
           <TabsContent value="signin">
             <form onSubmit={handleSignIn} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="signin-email">이메일</Label>
+                <Label htmlFor="signin-email">Email</Label>
                 <Input
                   id="signin-email"
                   type="email"
@@ -173,7 +173,7 @@ const Auth = () => {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="signin-password">비밀번호</Label>
+                <Label htmlFor="signin-password">Password</Label>
                 <Input
                   id="signin-password"
                   type="password"
@@ -188,7 +188,7 @@ const Auth = () => {
                 className="w-full bg-gradient-to-r from-primary to-accent hover:opacity-90"
                 disabled={isLoading}
               >
-                {isLoading ? "로그인 중..." : "로그인"}
+                {isLoading ? "Signing in..." : "Sign In"}
               </Button>
             </form>
           </TabsContent>
@@ -196,7 +196,7 @@ const Auth = () => {
           <TabsContent value="signup">
             <form onSubmit={handleSignUp} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="signup-email">이메일</Label>
+                <Label htmlFor="signup-email">Email</Label>
                 <Input
                   id="signup-email"
                   type="email"
@@ -207,7 +207,7 @@ const Auth = () => {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="signup-password">비밀번호</Label>
+                <Label htmlFor="signup-password">Password</Label>
                 <Input
                   id="signup-password"
                   type="password"
@@ -216,14 +216,14 @@ const Auth = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   disabled={isLoading}
                 />
-                <p className="text-xs text-muted-foreground">최소 6자 이상</p>
+                <p className="text-xs text-muted-foreground">At least 6 characters</p>
               </div>
               <Button
                 type="submit"
                 className="w-full bg-gradient-to-r from-primary to-accent hover:opacity-90"
                 disabled={isLoading}
               >
-                {isLoading ? "회원가입 중..." : "회원가입"}
+                {isLoading ? "Signing up..." : "Sign Up"}
               </Button>
             </form>
           </TabsContent>

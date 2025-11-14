@@ -98,8 +98,16 @@ const Dashboard = () => {
       }
     }
     
+    // Check if stored profiles have email field, if not, reset to default
     if (storedProfiles) {
-      setProfiles(storedProfiles);
+      const hasEmail = storedProfiles.includes('**Email:**');
+      if (!hasEmail) {
+        // Old format detected, reset to new default with emails
+        setProfiles(DEFAULT_PROFILES);
+        sessionStorage.setItem('phaseflow_profiles', DEFAULT_PROFILES);
+      } else {
+        setProfiles(storedProfiles);
+      }
     }
   }, []);
 

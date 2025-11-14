@@ -23,33 +23,69 @@ serve(async (req) => {
       );
     }
 
-    // Base64 디코딩
-    const binaryData = Uint8Array.from(atob(file_base64), c => c.charCodeAt(0));
-    
-    // PDF 텍스트 추출 - 간단한 방법으로 추출
-    // PDF는 복잡한 구조이므로, 기본적인 텍스트만 추출
-    let textContent = `[PDF 파일: ${file_name}]\n\n`;
-    
-    // PDF 파일의 경우 기본적인 메타데이터만 추출
-    const decoder = new TextDecoder('utf-8', { fatal: false });
-    const fullText = decoder.decode(binaryData);
-    
-    // PDF에서 텍스트 부분 추출 (간단한 패턴 매칭)
-    const textMatches = fullText.match(/\(([^)]+)\)/g);
-    if (textMatches && textMatches.length > 0) {
-      const extractedTexts = textMatches
-        .map(match => match.slice(1, -1))
-        .filter(text => text.length > 3 && /[가-힣a-zA-Z]/.test(text))
-        .join(' ');
-      
-      textContent += `추출된 내용:\n${extractedTexts.substring(0, 3000)}`;
-    } else {
-      textContent += `PDF 파일이 업로드되었습니다. 파일 크기: ${(binaryData.length / 1024).toFixed(2)} KB\n`;
-      textContent += `AI가 문서의 존재를 인식하고 분석할 수 있도록 파일명과 메타데이터를 전달합니다.`;
+    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+    if (!LOVABLE_API_KEY) {
+      throw new Error("LOVABLE_API_KEY is not configured");
     }
 
+    console.log(`Processing PDF: ${file_name}`);
+
+    // Gemini AI에게 PDF 분석 요청
+    const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${LOVABLE_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'google/gemini-2.5-flash',
+        messages: [
+          {
+            role: 'user',
+            content: [
+              {
+                type: 'text',
+                text: '이 PDF 문서의 모든 텍스트 내용을 추출해주세요. 제목, 본문, 표, 리스트 등 모든 텍스트를 포함하되, 원본의 구조와 포맷을 최대한 유지해주세요. 한글과 영어 모두 정확하게 추출해주세요.'
+              },
+              {
+                type: 'file',
+                data: file_base64,
+                mimeType: 'application/pdf'
+              }
+            ]
+          }
+        ],
+      }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("AI gateway error:", response.status, errorText);
+      
+      if (response.status === 429) {
+        return new Response(
+          JSON.stringify({ error: "요청 한도 초과. 잠시 후 다시 시도해주세요." }),
+          { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      
+      if (response.status === 402) {
+        return new Response(
+          JSON.stringify({ error: "크레딧 부족. Lovable AI 크레딧을 충전해주세요." }),
+          { status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      
+      throw new Error(`AI gateway error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    const extractedText = data.choices[0].message.content;
+    
+    console.log("PDF text extracted successfully");
+
     return new Response(
-      JSON.stringify({ text: textContent }),
+      JSON.stringify({ text: extractedText }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
       }

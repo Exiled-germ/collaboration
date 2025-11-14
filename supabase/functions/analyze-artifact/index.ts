@@ -59,9 +59,31 @@ serve(async (req) => {
   try {
     const { profiles, phase_id, phase_name, artifact_content } = await req.json();
     
+    // Input validation
     if (!profiles || !artifact_content) {
       return new Response(
         JSON.stringify({ error: "프로필과 작업 내용이 필요합니다." }), 
+        { 
+          status: 400, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      );
+    }
+
+    // Length validation to prevent abuse
+    if (typeof profiles !== 'string' || profiles.length > 10000) {
+      return new Response(
+        JSON.stringify({ error: "팀원 프로필은 10,000자를 초과할 수 없습니다." }), 
+        { 
+          status: 400, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      );
+    }
+
+    if (typeof artifact_content !== 'string' || artifact_content.length > 10000) {
+      return new Response(
+        JSON.stringify({ error: "작업 내용은 10,000자를 초과할 수 없습니다." }), 
         { 
           status: 400, 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' } 

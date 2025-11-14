@@ -100,9 +100,31 @@ serve(async (req) => {
   try {
     const { project_description, profiles } = await req.json();
     
+    // Input validation
     if (!project_description || !profiles) {
       return new Response(
         JSON.stringify({ error: "프로젝트 설명과 팀원 프로필이 필요합니다." }), 
+        { 
+          status: 400, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      );
+    }
+
+    // Length validation to prevent abuse
+    if (typeof project_description !== 'string' || project_description.length > 10000) {
+      return new Response(
+        JSON.stringify({ error: "프로젝트 설명은 10,000자를 초과할 수 없습니다." }), 
+        { 
+          status: 400, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      );
+    }
+
+    if (typeof profiles !== 'string' || profiles.length > 10000) {
+      return new Response(
+        JSON.stringify({ error: "팀원 프로필은 10,000자를 초과할 수 없습니다." }), 
         { 
           status: 400, 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' } 

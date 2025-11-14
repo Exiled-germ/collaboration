@@ -14,7 +14,7 @@ const AIInvites = ({ invites, isAnalyzing }: AIInvitesProps) => {
         <div className="w-10 h-10 rounded-lg bg-notification/20 flex items-center justify-center">
           <Bell className="w-5 h-5 text-notification-accent" />
         </div>
-        <h2 className="text-xl font-semibold text-foreground">AI 자동 초대</h2>
+        <h2 className="text-xl font-semibold text-foreground">AI Auto Invites</h2>
       </div>
 
       <div className="flex-1 overflow-y-auto">
@@ -22,14 +22,14 @@ const AIInvites = ({ invites, isAnalyzing }: AIInvitesProps) => {
           <div className="flex items-center justify-center h-full">
             <div className="flex flex-col items-center gap-3">
               <div className="w-12 h-12 rounded-full bg-gradient-to-r from-primary to-accent animate-pulse" />
-              <p className="text-sm text-muted-foreground">AI가 작업물을 분석하고 최적의 동료를 찾는 중...</p>
+              <p className="text-sm text-muted-foreground">AI is analyzing work and finding the best collaborators...</p>
             </div>
           </div>
         ) : invites.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-center">
             <UserPlus className="w-12 h-12 text-muted-foreground/50 mb-2" />
             <p className="text-sm text-muted-foreground">
-              작업물을 업로드하면 AI 초대 알림이 여기에 표시됩니다
+              Upload work artifacts to see AI invite notifications here
             </p>
           </div>
         ) : (

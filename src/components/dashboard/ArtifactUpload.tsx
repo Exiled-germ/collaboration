@@ -35,8 +35,8 @@ const ArtifactUpload = ({ phases, onUpload, feedItems, isAnalyzing }: ArtifactUp
       let parsedContent = content;
       for (const file of newFiles) {
         toast({
-          title: "파일 처리 중",
-          description: `${file.name} 분석 중...`,
+          title: "Processing file",
+          description: `Analyzing ${file.name}...`,
         });
         
         const fileContent = await parseFile(file);
@@ -47,13 +47,13 @@ const ArtifactUpload = ({ phases, onUpload, feedItems, isAnalyzing }: ArtifactUp
       setUploadedFiles(prev => [...prev, ...newFiles]);
       
       toast({
-        title: "파일 업로드 완료",
-        description: `${newFiles.length}개의 파일이 분석되었습니다.`,
+        title: "Files uploaded",
+        description: `${newFiles.length} file(s) have been analyzed.`,
       });
     } catch (error) {
       toast({
-        title: "파일 처리 실패",
-        description: error instanceof Error ? error.message : "파일을 처리할 수 없습니다.",
+        title: "File processing failed",
+        description: error instanceof Error ? error.message : "Unable to process file.",
         variant: "destructive",
       });
     } finally {
@@ -88,13 +88,13 @@ const ArtifactUpload = ({ phases, onUpload, feedItems, isAnalyzing }: ArtifactUp
         <div className="w-10 h-10 rounded-lg bg-success/10 flex items-center justify-center">
           <Upload className="w-5 h-5 text-success-accent" />
         </div>
-        <h2 className="text-xl font-semibold text-foreground">작업물 업로드</h2>
+        <h2 className="text-xl font-semibold text-foreground">Artifact Upload</h2>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4 mb-4">
         <Select value={selectedPhase} onValueChange={setSelectedPhase}>
           <SelectTrigger>
-            <SelectValue placeholder="Phase 선택" />
+            <SelectValue placeholder="Select Phase" />
           </SelectTrigger>
           <SelectContent>
             {Object.values(phases).map((phase) => (
@@ -121,7 +121,7 @@ const ArtifactUpload = ({ phases, onUpload, feedItems, isAnalyzing }: ArtifactUp
           >
             <File className="w-5 h-5 text-muted-foreground" />
             <span className="text-sm text-muted-foreground">
-              DOCX, PPTX, ZIP, TXT 파일 첨부 (여러 개 선택 가능)
+              Attach DOCX, PPTX, ZIP, TXT files (multiple selection available)
             </span>
           </label>
 
@@ -157,7 +157,7 @@ const ArtifactUpload = ({ phases, onUpload, feedItems, isAnalyzing }: ArtifactUp
         <Textarea
           value={content}
           onChange={(e) => setContent(e.target.value)}
-          placeholder="완료한 작업 내용을 요약하거나, 위에서 파일을 첨부하세요..."
+          placeholder="Summarize your completed work or attach files above..."
           className="min-h-[120px] resize-none"
         />
 
@@ -166,7 +166,7 @@ const ArtifactUpload = ({ phases, onUpload, feedItems, isAnalyzing }: ArtifactUp
           disabled={isAnalyzing || isProcessing}
           className="w-full bg-gradient-to-r from-success-accent to-primary hover:opacity-90 transition-opacity text-white"
         >
-          {isProcessing ? "파일 처리 중..." : isAnalyzing ? "AI 분석 중..." : "🚀 작업물 업로드 및 AI 분석 요청"}
+          {isProcessing ? "Processing files..." : isAnalyzing ? "AI Analyzing..." : "🚀 Upload Work & Request AI Analysis"}
         </Button>
       </form>
 
@@ -176,7 +176,7 @@ const ArtifactUpload = ({ phases, onUpload, feedItems, isAnalyzing }: ArtifactUp
           <div className="flex flex-col items-center justify-center h-full text-center">
             <FileText className="w-12 h-12 text-muted-foreground/50 mb-2" />
             <p className="text-sm text-muted-foreground">
-              아직 업로드된 작업물이 없습니다
+              No uploaded work artifacts yet
             </p>
           </div>
         ) : (

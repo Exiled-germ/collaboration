@@ -33,37 +33,37 @@ export interface FeedItem {
   timestamp: Date;
 }
 
-const DEFAULT_PROFILES = `#### [팀원 프로필 목록]
+const DEFAULT_PROFILES = `#### [Team Member Profiles]
 
-* **이동욱 (CPO/기획):**
-    * **Loves:** "유저 인터뷰, 경쟁사 분석, 제품의 'Why'를 정의하는 것, GTM(Go-to-Market) 전략 수립."
-    * **Hates:** "이미 정해진 기능의 디테일한 PRD 작성, 픽셀 단위의 UI 검수, 반복적인 프로젝트 관리."
+* **David (CPO/Product):**
+    * **Loves:** "User interviews, competitive analysis, defining product 'Why', GTM strategy."
+    * **Hates:** "Writing detailed PRDs for pre-decided features, pixel-perfect UI reviews, repetitive project management."
     * **Tools:** "Notion, Figma, Miro, Google Analytics, Mixpanel, Amplitude"
-    * **Career:** "전 스타트업에서 0→1 제품 기획 3회 경험. B2C 앱 MAU 10만→50만 성장 리드."
+    * **Career:** "Led 0→1 product planning 3 times at previous startups. Led B2C app growth from 100K→500K MAU."
 
-* **알렉스 (마케터):**
-    * **Loves:** "그로스 해킹, A/B 테스트 설계, 바이럴 밈(Meme) 기획, 짧고 임팩트 있는 카피라이팅."
-    * **Hates:** "장문의 감성적인 블로그 글쓰기, SEO 최적화, 정교한 데이터 분석(SQL)."
+* **Alex (Marketer):**
+    * **Loves:** "Growth hacking, A/B test design, viral meme planning, short and impactful copywriting."
+    * **Hates:** "Writing long emotional blog posts, SEO optimization, detailed data analysis (SQL)."
     * **Tools:** "Google Ads, Facebook Ads, TikTok Ads, Canva, CapCut"
-    * **Career:** "지난 2년간 5개 바이럴 캠페인 기획 (평균 200% 유저 증가)."
+    * **Career:** "Planned 5 viral campaigns over the past 2 years (average 200% user growth)."
 
-* **로빈 (백엔드/AI 개발자):**
-    * **Loves:** "새로운 AI/LLM 논문 읽고 적용하기, 복잡한 백엔드 아키텍처 설계, Python/Go, 시스템 최적화."
-    * **Hates:** "프론트엔드 작업(CSS, JS) 일절, 단순 CRUD API 개발, 기획이 불명확한 상태에서 개발 시작하기."
+* **Robin (Backend/AI Developer):**
+    * **Loves:** "Reading and applying new AI/LLM papers, designing complex backend architecture, Python/Go, system optimization."
+    * **Hates:** "Frontend work (CSS, JS) at all, simple CRUD API development, starting development with unclear planning."
     * **Tools:** "Python, Go, PyTorch, FastAPI, Docker, Kubernetes, PostgreSQL"
-    * **Career:** "AI 스타트업 3년차. GPT-4 기반 챗봇 시스템 구축 (일 10만 요청 처리)."
+    * **Career:** "3 years at AI startup. Built GPT-4 based chatbot system (handling 100K requests/day)."
 
-* **제이 (프론트엔드 개발자):**
-    * **Loves:** "인터랙티브한 UI 구현, CSS 애니메이션, 웹 성능 최적화, React/Vue."
-    * **Hates:** "데이터베이스 설계, AI 모델 서빙, 인프라(AWS) 작업."
+* **Jay (Frontend Developer):**
+    * **Loves:** "Building interactive UIs, CSS animations, web performance optimization, React/Vue."
+    * **Hates:** "Database design, AI model serving, infrastructure (AWS) work."
     * **Tools:** "React, Next.js, TypeScript, Tailwind CSS, Framer Motion, GSAP"
-    * **Career:** "프론트엔드 5년차. 랜딩 페이지 전환율 30% 개선. React 오픈소스 라이브러리 제작."
+    * **Career:** "5 years frontend. Improved landing page conversion by 30%. Created React open-source library."
 
-* **세라 (디자이너/UX 리서처):**
-    * **Loves:** "Figma로 프로토타입 만들기, 유저 사용성 테스트(UT) 진행, 복잡한 정책을 단순한 UX Flow로 그리기."
-    * **Hates:** "이미지 보정, 아이콘 제작 등 그래픽 디자인, 개발 중인 화면의 CSS 픽셀 수정 요청."
+* **Sarah (Designer/UX Researcher):**
+    * **Loves:** "Creating prototypes in Figma, conducting usability tests (UT), turning complex policies into simple UX flows."
+    * **Hates:** "Image retouching, icon creation and other graphic design, CSS pixel modification requests during development."
     * **Tools:** "Figma, Sketch, Miro, Maze, UserTesting, Hotjar"
-    * **Career:** "UX 디자이너 4년차. 금융앱 리뉴얼로 이탈률 40% 감소. 50+ 사용성 테스트 진행."`;
+    * **Career:** "4 years UX designer. Reduced churn rate by 40% through financial app redesign. Conducted 50+ usability tests."`;
 
 const Dashboard = () => {
   const [projectData, setProjectData] = useState<ProjectData | null>(null);
@@ -96,8 +96,8 @@ const Dashboard = () => {
   const handleArtifactUpload = async (phaseId: string, content: string) => {
     if (!content.trim()) {
       toast({
-        title: "입력 필요",
-        description: "작업 내용을 입력해주세요.",
+        title: "Input required",
+        description: "Please enter work content.",
         variant: "destructive",
       });
       return;
@@ -105,8 +105,8 @@ const Dashboard = () => {
 
     if (!projectData) {
       toast({
-        title: "프로젝트 없음",
-        description: "먼저 프로젝트를 생성해주세요.",
+        title: "No project",
+        description: "Please create a project first.",
         variant: "destructive",
       });
       return;
@@ -140,17 +140,17 @@ const Dashboard = () => {
         setInvites(prev => [...data, ...prev]);
         
         toast({
-          title: "분석 완료",
+          title: "Analysis complete",
           description: data.length > 0 
-            ? `${data.length}개의 자동 초대가 생성되었습니다!`
-            : "다음 단계 협업이 필요하지 않습니다.",
+            ? `${data.length} AI invite(s) generated!`
+            : "No next-step collaboration needed.",
         });
       }
     } catch (error) {
       console.error("Error analyzing artifact:", error);
       toast({
-        title: "오류 발생",
-        description: error instanceof Error ? error.message : "분석 중 오류가 발생했습니다.",
+        title: "Error occurred",
+        description: error instanceof Error ? error.message : "An error occurred during analysis.",
         variant: "destructive",
       });
     } finally {
@@ -163,8 +163,8 @@ const Dashboard = () => {
     sessionStorage.setItem('phaseflow_project', JSON.stringify(refinedProject));
     
     toast({
-      title: "Phase 구조 업데이트 완료",
-      description: "새로운 Phase 구조가 적용되었습니다.",
+      title: "Phase structure updated",
+      description: "New phase structure has been applied.",
     });
   };
 

@@ -111,7 +111,7 @@ const ArtifactUpload = ({ phases, onUpload, feedItems, isAnalyzing }: ArtifactUp
             type="file"
             onChange={handleFileSelect}
             multiple
-            accept=".docx,.pptx,.zip,.txt,.md"
+            accept=".pdf,.docx,.pptx,.zip,.txt,.md"
             className="hidden"
             id="file-upload"
           />
@@ -121,7 +121,7 @@ const ArtifactUpload = ({ phases, onUpload, feedItems, isAnalyzing }: ArtifactUp
           >
             <File className="w-5 h-5 text-muted-foreground" />
             <span className="text-sm text-muted-foreground">
-              DOCX, PPTX, ZIP, TXT 파일 첨부 (여러 개 선택 가능)
+              PDF, DOCX, PPTX, ZIP, TXT 파일 첨부 (여러 개 선택 가능)
             </span>
           </label>
 

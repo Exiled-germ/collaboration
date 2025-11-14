@@ -39,17 +39,36 @@ const ArtifactUpload = ({ phases, onUpload, feedItems, isAnalyzing }: ArtifactUp
           description: `${file.name} 분석 중...`,
         });
         
-        const fileContent = await parseFile(file);
-        parsedContent += `\n\n--- ${file.name} ---\n${fileContent}\n`;
+        try {
+          const fileContent = await parseFile(file);
+          parsedContent += `\n\n--- ${file.name} ---\n${fileContent}\n`;
+        } catch (error) {
+          // PDF 파일의 경우 파싱이 어려우므로 메타정보만 추가
+          if (file.name.toLowerCase().endsWith('.pdf')) {
+            parsedContent += `\n\n--- ${file.name} (${getFileSizeDisplay(file.size)}) ---\n`;
+            parsedContent += `📄 PDF 파일이 첨부되었습니다. 아래 텍스트 영역에 문서의 주요 내용을 직접 요약해서 입력해주세요.\n\n`;
+            
+            toast({
+              title: "PDF 파일 첨부 완료",
+              description: "PDF 내용을 아래 텍스트 영역에 직접 입력해주세요.",
+              duration: 5000,
+            });
+          } else {
+            throw error;
+          }
+        }
       }
       
       setContent(parsedContent);
       setUploadedFiles(prev => [...prev, ...newFiles]);
       
-      toast({
-        title: "파일 업로드 완료",
-        description: `${newFiles.length}개의 파일이 분석되었습니다.`,
-      });
+      const hasPDF = newFiles.some(f => f.name.toLowerCase().endsWith('.pdf'));
+      if (!hasPDF) {
+        toast({
+          title: "파일 업로드 완료",
+          description: `${newFiles.length}개의 파일이 분석되었습니다.`,
+        });
+      }
     } catch (error) {
       toast({
         title: "파일 처리 실패",
@@ -120,9 +139,12 @@ const ArtifactUpload = ({ phases, onUpload, feedItems, isAnalyzing }: ArtifactUp
             className="flex items-center justify-center gap-2 px-4 py-3 border-2 border-dashed border-border rounded-lg cursor-pointer hover:bg-muted/50 transition-colors"
           >
             <File className="w-5 h-5 text-muted-foreground" />
-            <span className="text-sm text-muted-foreground">
-              PDF, DOCX, PPTX, ZIP, TXT 파일 첨부 (여러 개 선택 가능)
-            </span>
+            <div className="text-sm text-muted-foreground">
+              <div>PDF, DOCX, PPTX, ZIP, TXT 파일 첨부 (여러 개 선택 가능)</div>
+              <div className="text-xs mt-1 text-muted-foreground/70">
+                💡 PDF는 내용을 직접 텍스트로 입력해주세요
+              </div>
+            </div>
           </label>
 
           {uploadedFiles.length > 0 && (
@@ -157,7 +179,10 @@ const ArtifactUpload = ({ phases, onUpload, feedItems, isAnalyzing }: ArtifactUp
         <Textarea
           value={content}
           onChange={(e) => setContent(e.target.value)}
-          placeholder="완료한 작업 내용을 요약하거나, 위에서 파일을 첨부하세요..."
+          placeholder="완료한 작업 내용을 요약하거나, 위에서 파일을 첨부하세요...
+          
+💡 PDF 파일의 경우: 문서의 주요 내용을 여기에 직접 요약해서 입력해주세요.
+   (예: '10대 타겟 사용자 리서치 결과, 협업 시작 UX가 핵심 과제로 도출됨')"
           className="min-h-[120px] resize-none"
         />
 

@@ -4,7 +4,7 @@ import { useToast } from "@/hooks/use-toast";
 import ProjectPhases from "@/components/dashboard/ProjectPhases";
 import ArtifactUpload from "@/components/dashboard/ArtifactUpload";
 import AIInvites from "@/components/dashboard/AIInvites";
-import { Sparkles } from "lucide-react";
+import { Sparkles, Users } from "lucide-react";
 
 export interface Phase {
   id: string;
@@ -131,16 +131,26 @@ const Dashboard = () => {
       <div className="max-w-[1600px] mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-[var(--shadow-medium)]">
-              <Sparkles className="w-6 h-6 text-white" />
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-[var(--shadow-medium)]">
+                <Sparkles className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                  PhaseFlow v2.0
+                </h1>
+                <p className="text-muted-foreground">Live Dashboard - 실시간 협업 허브</p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                PhaseFlow v2.0
-              </h1>
-              <p className="text-muted-foreground">Live Dashboard - 실시간 협업 허브</p>
-            </div>
+            <a
+              href="/"
+              className="flex items-center gap-2 px-4 py-2 bg-secondary hover:bg-secondary/80 text-secondary-foreground rounded-lg transition-colors"
+              title="팀원 프로필 편집"
+            >
+              <Users className="w-5 h-5" />
+              <span className="hidden sm:inline">팀원 프로필 편집</span>
+            </a>
           </div>
           <p className="text-lg text-foreground font-medium">프로젝트: 게이머 매칭 서비스 MVP</p>
         </div>

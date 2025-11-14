@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import ProjectPhases from "@/components/dashboard/ProjectPhases";
@@ -9,8 +9,15 @@ import { Sparkles, Users } from "lucide-react";
 export interface Phase {
   id: string;
   name: string;
+  description?: string;
   recommended: string[];
   active: string[];
+}
+
+export interface ProjectData {
+  project_name: string;
+  project_summary: string;
+  phases: Phase[];
 }
 
 export interface AIInvite {
@@ -24,13 +31,6 @@ export interface FeedItem {
   content: string;
   timestamp: Date;
 }
-
-const INITIAL_PHASES: Record<string, Phase> = {
-  phase1: { id: "phase1", name: "Phase 1: 문제 정의", recommended: ["이동욱"], active: ["이동욱"] },
-  phase2: { id: "phase2", name: "Phase 2: UX 리서치", recommended: ["세라", "이동욱"], active: [] },
-  phase3: { id: "phase3", name: "Phase 3: 프로토타입", recommended: ["제이", "로빈", "세라"], active: [] },
-  phase4: { id: "phase4", name: "Phase 4: GTM 기획", recommended: ["알렉스", "이동욱"], active: [] }
-};
 
 const DEFAULT_PROFILES = `#### [팀원 프로필 목록]
 
@@ -65,11 +65,31 @@ const DEFAULT_PROFILES = `#### [팀원 프로필 목록]
     * **Career:** "UX 디자이너 4년차. 금융앱 리뉴얼로 이탈률 40% 감소. 50+ 사용성 테스트 진행."`;
 
 const Dashboard = () => {
-  const [phases] = useState<Record<string, Phase>>(INITIAL_PHASES);
+  const [projectData, setProjectData] = useState<ProjectData | null>(null);
+  const [profiles, setProfiles] = useState(DEFAULT_PROFILES);
   const [invites, setInvites] = useState<AIInvite[]>([]);
   const [feedItems, setFeedItems] = useState<FeedItem[]>([]);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const { toast } = useToast();
+
+  // Load project data from sessionStorage on mount
+  useEffect(() => {
+    const storedProject = sessionStorage.getItem('phaseflow_project');
+    const storedProfiles = sessionStorage.getItem('phaseflow_profiles');
+    
+    if (storedProject) {
+      try {
+        const parsed = JSON.parse(storedProject);
+        setProjectData(parsed);
+      } catch (error) {
+        console.error("Error parsing project data:", error);
+      }
+    }
+    
+    if (storedProfiles) {
+      setProfiles(storedProfiles);
+    }
+  }, []);
 
   const handleArtifactUpload = async (phaseId: string, content: string) => {
     if (!content.trim()) {
@@ -81,7 +101,17 @@ const Dashboard = () => {
       return;
     }
 
-    const phaseName = phases[phaseId]?.name || phaseId;
+    if (!projectData) {
+      toast({
+        title: "프로젝트 없음",
+        description: "먼저 프로젝트를 생성해주세요.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const phase = projectData.phases.find(p => p.id === phaseId);
+    const phaseName = phase?.name || phaseId;
     
     // Add to feed
     setFeedItems(prev => [{
@@ -95,7 +125,7 @@ const Dashboard = () => {
     try {
       const { data, error } = await supabase.functions.invoke("analyze-artifact", {
         body: {
-          profiles: DEFAULT_PROFILES,
+          profiles: profiles,
           phase_id: phaseId,
           phase_name: phaseName,
           artifact_content: content,
@@ -126,6 +156,12 @@ const Dashboard = () => {
     }
   };
 
+  // Convert phases array to Record for ArtifactUpload component
+  const phasesRecord: Record<string, Phase> = {};
+  projectData?.phases.forEach(phase => {
+    phasesRecord[phase.id] = phase;
+  });
+
   return (
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-[1600px] mx-auto">
@@ -146,31 +182,53 @@ const Dashboard = () => {
             <a
               href="/"
               className="flex items-center gap-2 px-4 py-2 bg-secondary hover:bg-secondary/80 text-secondary-foreground rounded-lg transition-colors"
-              title="팀원 프로필 편집"
+              title="새 프로젝트 생성"
             >
               <Users className="w-5 h-5" />
-              <span className="hidden sm:inline">팀원 프로필 편집</span>
+              <span className="hidden sm:inline">새 프로젝트</span>
             </a>
           </div>
-          <p className="text-lg text-foreground font-medium">프로젝트: 게이머 매칭 서비스 MVP</p>
+          <p className="text-lg text-foreground font-medium">
+            {projectData?.project_name || "프로젝트를 생성해주세요"}
+          </p>
+          {projectData?.project_summary && (
+            <p className="text-sm text-muted-foreground mt-1">{projectData.project_summary}</p>
+          )}
         </div>
 
-        {/* Project Phases */}
-        <ProjectPhases phases={Object.values(phases)} />
+        {projectData ? (
+          <>
+            {/* Project Phases */}
+            <ProjectPhases phases={projectData.phases} />
 
-        {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-          {/* Activity Feed */}
-          <ArtifactUpload 
-            phases={phases}
-            onUpload={handleArtifactUpload}
-            feedItems={feedItems}
-            isAnalyzing={isAnalyzing}
-          />
+            {/* Main Content Grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+              {/* Activity Feed */}
+              <ArtifactUpload 
+                phases={phasesRecord}
+                onUpload={handleArtifactUpload}
+                feedItems={feedItems}
+                isAnalyzing={isAnalyzing}
+              />
 
-          {/* AI Invites */}
-          <AIInvites invites={invites} isAnalyzing={isAnalyzing} />
-        </div>
+              {/* AI Invites */}
+              <AIInvites invites={invites} isAnalyzing={isAnalyzing} />
+            </div>
+          </>
+        ) : (
+          <div className="flex flex-col items-center justify-center min-h-[400px] text-center">
+            <Sparkles className="w-16 h-16 text-muted-foreground/50 mb-4" />
+            <h3 className="text-xl font-semibold text-foreground mb-2">프로젝트가 없습니다</h3>
+            <p className="text-muted-foreground mb-6">먼저 프로젝트를 생성하여 AI가 Phase를 설계하도록 하세요</p>
+            <a
+              href="/"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity font-semibold"
+            >
+              <Sparkles className="w-5 h-5" />
+              프로젝트 생성하기
+            </a>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -5,7 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Upload, FileText, File, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { parseFile, getFileSizeDisplay } from "@/utils/fileParser";
+import { parseFile, formatFileSize, getFileIcon } from "@/lib/fileParser";
 import type { Phase, FeedItem } from "@/pages/Dashboard";
 
 interface ArtifactUploadProps {
@@ -111,7 +111,7 @@ const ArtifactUpload = ({ phases, onUpload, feedItems, isAnalyzing }: ArtifactUp
             type="file"
             onChange={handleFileSelect}
             multiple
-            accept=".docx,.pptx,.zip,.txt,.md"
+            accept=".pdf,.docx,.pptx,.zip,.txt,.md,.png,.jpg,.jpeg"
             className="hidden"
             id="file-upload"
           />
@@ -121,7 +121,7 @@ const ArtifactUpload = ({ phases, onUpload, feedItems, isAnalyzing }: ArtifactUp
           >
             <File className="w-5 h-5 text-muted-foreground" />
             <span className="text-sm text-muted-foreground">
-              Attach DOCX, PPTX, ZIP, TXT files (multiple selection available)
+              Attach PDF, DOCX, PPTX, ZIP, TXT, Images (multiple selection available)
             </span>
           </label>
 
@@ -136,7 +136,7 @@ const ArtifactUpload = ({ phases, onUpload, feedItems, isAnalyzing }: ArtifactUp
                     <FileText className="w-4 h-4 text-primary flex-shrink-0" />
                     <span className="text-sm truncate">{file.name}</span>
                     <span className="text-xs text-muted-foreground flex-shrink-0">
-                      ({getFileSizeDisplay(file.size)})
+                      ({formatFileSize(file.size)})
                     </span>
                   </div>
                   <Button

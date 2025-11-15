@@ -5,6 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { AlertCircle, Sparkles, RefreshCw } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { supabase } from "@/integrations/supabase/client";
+import { refinePhaseStructure } from "@/lib/gemini";
 import type { ProjectData } from "@/pages/Dashboard";
 
 interface PhaseRefinePanelProps {
@@ -35,24 +36,32 @@ const PhaseRefinePanel = ({
     setShowPreview(false);
 
     try {
-      const { data, error } = await supabase.functions.invoke('refine-phases', {
-        body: {
-          current_project: currentProject,
-          profiles: profiles,
-          user_request: userRequest,
-        }
-      });
+      // Call Gemini API
+      const refinedProject = await refinePhaseStructure(
+        currentProject,
+        profiles,
+        userRequest
+      );
 
-      if (error) throw error;
-
-      if (data?.refined_project) {
-        setPreviewProject(data.refined_project);
+      if (refinedProject) {
+        setPreviewProject(refinedProject);
         setShowPreview(true);
+
+        // Update in database
+        const projectId = sessionStorage.getItem('phaseflow_project_id');
+        if (projectId) {
+          await supabase
+            .from('projects')
+            .update({
+              project_name: refinedProject.project_name,
+              project_summary: refinedProject.project_summary,
+              phases: refinedProject.phases,
+            })
+            .eq('id', projectId);
+        }
       }
     } catch (error) {
-      if (import.meta.env.DEV) {
-        console.error("Phase 구조 개선 실패:", error);
-      }
+      console.error("Phase 구조 개선 실패:", error);
     } finally {
       setIsRefining(false);
     }

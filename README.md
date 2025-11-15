@@ -1,73 +1,251 @@
-# Welcome to your Lovable project
+# PhaseFlow v2.0
 
-## Project info
+AI-Powered Project Phase Designer for PM
 
-**URL**: https://lovable.dev/projects/c6709202-43d5-42c7-a956-09975a453cdb
+## 🎯 Overview
 
-## How can I edit this code?
+PhaseFlow v2.0 is an intelligent project management tool that helps PMs organize projects into optimal phases and automatically assign team members based on their skills, preferences, and work history.
 
-There are several ways of editing your application.
+### Key Features
 
-**Use Lovable**
+- **Smart Onboarding**: Step-by-step project and team setup
+- **AI Phase Generation**: Automatically creates project phases using Google Gemini Flash
+- **Team Member Matching**: AI recommends best-fit team members for each phase
+- **Artifact Analysis**: Upload work artifacts (text, PDF, images) for AI analysis
+- **Automated Invitations**: Send email invites to team members for collaboration
+- **Phase Refinement**: Iteratively improve phase structure with AI assistance
+- **Real-time Dashboard**: Track progress, KPIs, and team activity
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/c6709202-43d5-42c7-a956-09975a453cdb) and start prompting.
+## 🚀 Tech Stack
 
-Changes made via Lovable will be committed automatically to this repo.
+- **Frontend**: React 18 + TypeScript + Vite
+- **UI**: Shadcn UI + Tailwind CSS
+- **Backend**: Supabase (PostgreSQL + Auth + Storage + Realtime)
+- **AI**: Google Gemini 2.0 Flash
+- **Email**: Resend API
+- **Integrations**: Notion API
+- **File Processing**: pdfjs-dist, Tesseract.js
+- **State Management**: React Query + Supabase
 
-**Use your preferred IDE**
+## 📦 Installation
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+```bash
+# Install dependencies
+npm install
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+# Copy environment variables
+cp .env.example .env
 
-Follow these steps:
+# Update .env with your credentials:
+# - VITE_SUPABASE_URL (required)
+# - VITE_SUPABASE_ANON_KEY (required)
+# - VITE_GEMINI_API_KEY (required)
+# - VITE_RESEND_API_KEY (optional - for email)
+# - VITE_NOTION_API_KEY (optional - can be set in UI)
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+# Run database migrations
+# (Use Supabase CLI or Dashboard to run migrations in supabase/migrations/)
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Start development server
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+## 🗄️ Database Schema
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### Tables
 
-**Use GitHub Codespaces**
+- **team_members**: Store team member profiles (name, role, email, loves, hates, tools, career)
+- **projects**: Store project information and phase structure
+- **phases**: Detailed phase tracking with milestones and KPIs
+- **ai_invites**: AI-generated collaboration invitations
+- **artifacts**: Uploaded work artifacts (text, PDF, images, Notion)
+- **activity_timeline**: Project activity log
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## 🎨 User Flow
 
-## What technologies are used for this project?
+### 1. Onboarding (3 Steps)
 
-This project is built with:
+**Step 1: Company Description**
+- Describe your company/organization
+- Team size and structure
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+**Step 2: Project Description**
+- Project name and goals
+- Core features and timeline
 
-## How can I deploy this project?
+**Step 3: Team Member Profiles**
+- Name, Role, Email (required)
+- Loves: Preferred tasks
+- Hates: Tasks to avoid
+- Tools: Technologies/tools they use
+- Career: Work history and experience
 
-Simply open [Lovable](https://lovable.dev/projects/c6709202-43d5-42c7-a956-09975a453cdb) and click on Share -> Publish.
+### 2. Project Analysis
 
-## Can I connect a custom domain to my Lovable project?
+- AI analyzes project description and team profiles
+- Generates 4-6 optimal phases
+- Recommends team members for each phase
+- Sets milestones and KPIs
 
-Yes, you can!
+### 3. Dashboard
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+**Project Phases Panel**
+- Visual phase cards with status
+- Recommended vs Active team members
+- Click to view phase details
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+**Artifact Upload**
+- Upload work artifacts (text, PDF, images)
+- AI analyzes and suggests next steps
+- Generates personalized invitations
+
+**AI Invites**
+- View all AI-generated invitations
+- Send email notifications to team members
+- Track invitation status
+
+**Activity Timeline** (NEW in v2.1)
+- Real-time activity tracking
+- Phase status changes
+- Team member actions
+- File uploads and analysis
+
+**Notion Import** (NEW in v2.1)
+- Import pages from Notion
+- Import entire databases
+- Automatic content parsing
+- Support for various block types
+
+### 4. Advanced Features
+
+**PDF & Image Processing**
+- Upload PDF documents with automatic text extraction
+- Upload images with OCR (English + Korean)
+- Confidence scores and metadata
+
+**Email Notifications**
+- Resend API integration
+- Beautiful HTML email templates
+- Batch sending support
+- Development mode for testing
+
+**Real-time Collaboration**
+- Live activity updates
+- Supabase Realtime subscriptions
+- Instant notifications
+- Team activity tracking
+
+**Phase Refinement**
+- Request changes to phase structure
+- AI generates improved structure
+- Preview and apply changes
+
+## 🤖 AI Features
+
+### 1. Project Analysis
+```typescript
+analyzeProject(projectDescription, teamProfiles)
+```
+- Analyzes project requirements
+- Matches team members to phases
+- Considers Loves/Hates/Tools/Career
+- Generates phase structure with milestones
+
+### 2. Artifact Analysis
+```typescript
+analyzeArtifact(profiles, phaseId, phaseName, content)
+```
+- Extracts insights from work artifacts
+- Identifies action items
+- Recommends next collaborators
+- Generates personalized invite messages
+
+### 3. Phase Refinement
+```typescript
+refinePhaseStructure(currentProject, profiles, refinementRequest)
+```
+- Modifies existing phase structure
+- Adds/removes/merges phases
+- Reassigns team members
+- Adjusts milestones and KPIs
+
+## 📧 Email Integration
+
+When AI recommends a team member for a task:
+1. Invitation is saved to database
+2. Email is sent to team member's email address
+3. Email includes:
+   - Phase name and description
+   - Why they were selected
+   - Personalized message from AI
+   - Link to accept/decline
+
+## 🔐 Security
+
+- Row Level Security (RLS) enabled on all tables
+- Users can only access their own data
+- Email addresses are validated
+- API keys stored in environment variables
+
+## 📊 Improvements from v1.0
+
+### ✅ Implemented
+- [x] Step-by-step onboarding (3 steps)
+- [x] Detailed team member profiles (Loves/Hates/Tools/Email/Career)
+- [x] Google Gemini Flash integration (replaced Lovable AI)
+- [x] Supabase database integration
+- [x] Phase status tracking (pending/in-progress/completed)
+- [x] Milestone and deadline management
+- [x] KPI tracking per phase
+- [x] Email notifications for invitations
+
+### 🚧 Planned
+- [ ] PDF/Image upload with OCR (VLM)
+- [ ] Notion API integration
+- [ ] Time tracking per phase
+- [ ] Team-to-team collaboration analytics
+- [ ] Phase structure before/after comparison
+- [ ] Advanced KPI dashboard
+- [ ] Slack/Discord integration
+
+## 🛠️ Development
+
+```bash
+# Run development server
+npm run dev
+
+# Build for production
+npm run build
+
+# Preview production build
+npm run preview
+
+# Lint code
+npm run lint
+```
+
+## 📝 Environment Variables
+
+```env
+# Supabase
+VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_ANON_KEY=your-anon-key
+
+# Google Gemini API
+VITE_GEMINI_API_KEY=your-gemini-api-key
+
+# Email Service (optional)
+VITE_EMAIL_SERVICE_URL=your-email-service-url
+```
+
+## 🤝 Contributing
+
+This is a private project. For questions or suggestions, contact the development team.
+
+## 📄 License
+
+Private - All Rights Reserved
+
+---
+
+**PhaseFlow v2.0** - Built with ❤️ for PMs who want to work smarter, not harder.

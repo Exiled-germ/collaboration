@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -6,57 +6,12 @@ import { Card } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Sparkles, Rocket, Users, LogOut } from "lucide-react";
-
-const DEFAULT_PROFILES = `#### [Team Member Profiles]
-
-* **David (CPO/Product):**
-    * **Loves:** "User interviews, competitive analysis, defining product 'Why', GTM strategy."
-    * **Hates:** "Writing detailed PRDs for pre-decided features, pixel-perfect UI reviews, repetitive project management."
-    * **Tools:** "Notion, Figma, Miro, Google Analytics, Mixpanel, Amplitude"
-    * **Career:** "Led 0→1 product planning 3 times at previous startups. Led B2C app growth from 100K→500K MAU."
-
-* **Alex (Marketer):**
-    * **Loves:** "Growth hacking, A/B test design, viral meme planning, short and impactful copywriting."
-    * **Hates:** "Writing long emotional blog posts, SEO optimization, detailed data analysis (SQL)."
-    * **Tools:** "Google Ads, Facebook Ads, TikTok Ads, Canva, CapCut"
-    * **Career:** "Planned 5 viral campaigns over the past 2 years (average 200% user growth)."
-
-* **Robin (Backend/AI Developer):**
-    * **Loves:** "Reading and applying new AI/LLM papers, designing complex backend architecture, Python/Go, system optimization."
-    * **Hates:** "Frontend work (CSS, JS) at all, simple CRUD API development, starting development with unclear planning."
-    * **Tools:** "Python, Go, PyTorch, FastAPI, Docker, Kubernetes, PostgreSQL"
-    * **Career:** "3 years at AI startup. Built GPT-4 based chatbot system (handling 100K requests/day)."
-
-* **Jay (Frontend Developer):**
-    * **Loves:** "Building interactive UIs, CSS animations, web performance optimization, React/Vue."
-    * **Hates:** "Database design, AI model serving, infrastructure (AWS) work."
-    * **Tools:** "React, Next.js, TypeScript, Tailwind CSS, Framer Motion, GSAP"
-    * **Career:** "5 years frontend. Improved landing page conversion by 30%. Created React open-source library."
-
-* **Sarah (Designer/UX Researcher):**
-    * **Loves:** "Creating prototypes in Figma, conducting usability tests (UT), turning complex policies into simple UX flows."
-    * **Hates:** "Image retouching, icon creation and other graphic design, CSS pixel modification requests during development."
-    * **Tools:** "Figma, Sketch, Miro, Maze, UserTesting, Hotjar"
-    * **Career:** "4 years UX designer. Reduced churn rate by 40% through financial app redesign. Conducted 50+ usability tests."`;
-
-const DEFAULT_PROJECT = `[Project Name] StorySync
-
-[Project Description] AI-powered web novel writer & webtoon artist matching platform targeting teenagers
-
-[Core Features]
-- Story Upload: 'Writer' users input their web novel synopsis (plot, genre, mood).
-- Art Upload: 'Artist' users input their art style portfolio (drawing style, preferred genre).
-- AI Matching: AI analyzes story mood (e.g., romance fantasy, tragedy) and art style (e.g., shoujo manga style, realistic style) to match optimal collaboration partners.
-- Collaboration Canvas: After matching, teams start working together on 'character sheets' in a shared in-app canvas.
-
-[Goals]
-- Form 10,000 collaboration teams within 3 months
-- Reach TOP 50 in App Store Entertainment category
-- Go viral on TikTok/X(Twitter) as 'Webtoon teams matched by AI'`;
+import { analyzeProject } from "@/lib/gemini";
+import { getOrCreateSession, saveProjectToSession, getSessionProject } from "@/lib/sessionService";
 
 const Index = () => {
-  const [projectDescription, setProjectDescription] = useState(DEFAULT_PROJECT);
-  const [profiles, setProfiles] = useState(DEFAULT_PROFILES);
+  const [projectDescription, setProjectDescription] = useState("");
+  const [profiles, setProfiles] = useState("");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -77,6 +32,79 @@ const Index = () => {
     }
   };
 
+  useEffect(() => {
+    const initializeSession = async () => {
+      // Check if user has nickname
+      const nickname = sessionStorage.getItem('phaseflow_nickname');
+      
+      if (!nickname) {
+        // No nickname, redirect to onboarding
+        navigate('/onboarding');
+        return;
+      }
+
+      try {
+        // Get or create session
+        const session = await getOrCreateSession(nickname);
+        sessionStorage.setItem('phaseflow_session_id', session.id);
+
+        // Check if session has existing project
+        if (session.current_project_id) {
+          const existingProject = await getSessionProject(session.id);
+          if (existingProject) {
+            // Load existing project
+            sessionStorage.setItem('phaseflow_project', JSON.stringify(existingProject));
+            sessionStorage.setItem('phaseflow_project_id', existingProject.id);
+            
+            toast({
+              title: "이전 작업 불러오기",
+              description: `${nickname} 팀의 프로젝트를 불러왔습니다.`,
+            });
+            
+            // Navigate to dashboard
+            navigate('/dashboard');
+            return;
+          }
+        }
+
+        // No existing project found
+        console.log('📭 No existing project for this session');
+        
+        // Check if user has completed onboarding
+        const hasOnboarded = sessionStorage.getItem('phaseflow_profiles');
+        
+        if (!hasOnboarded) {
+          console.log('🔄 Redirecting to onboarding...');
+          // User hasn't completed onboarding, redirect
+          navigate('/onboarding');
+          return;
+        }
+        
+        console.log('✅ Onboarding data found, staying on Index');
+        
+        // Load saved data from sessionStorage
+        const savedProfiles = sessionStorage.getItem('phaseflow_profiles');
+        const savedProject = sessionStorage.getItem('phaseflow_project');
+        
+        if (savedProfiles) {
+          setProfiles(savedProfiles);
+        }
+        if (savedProject) {
+          setProjectDescription(savedProject);
+        }
+      } catch (error) {
+        console.error('Session initialization error:', error);
+        toast({
+          title: "세션 오류",
+          description: "세션을 초기화하는 중 오류가 발생했습니다.",
+          variant: "destructive",
+        });
+      }
+    };
+
+    initializeSession();
+  }, [navigate, toast]);
+
   const handleAnalyze = async () => {
     if (!projectDescription.trim() || !profiles.trim()) {
       toast({
@@ -90,35 +118,45 @@ const Index = () => {
     setIsAnalyzing(true);
 
     try {
-      const { data, error } = await supabase.functions.invoke("analyze-project", {
-        body: {
-          project_description: projectDescription,
-          profiles: profiles,
-        },
+      const sessionId = sessionStorage.getItem('phaseflow_session_id');
+      const nickname = sessionStorage.getItem('phaseflow_nickname');
+
+      if (!sessionId || !nickname) {
+        throw new Error('세션 정보가 없습니다. 다시 로그인해주세요.');
+      }
+
+      // Call Gemini API
+      const projectData = await analyzeProject(projectDescription, profiles);
+
+      // Add default status to phases
+      const phasesWithStatus = projectData.phases.map((phase: any, index: number) => ({
+        ...phase,
+        status: index === 0 ? 'in-progress' : 'pending',
+      }));
+
+      projectData.phases = phasesWithStatus;
+
+      // Save to database
+      const teamMembersData = JSON.parse(sessionStorage.getItem('phaseflow_team_members') || '[]');
+      const savedProject = await saveProjectToSession(sessionId, projectData, teamMembersData);
+
+      // Store project data in sessionStorage for Dashboard to use
+      sessionStorage.setItem('phaseflow_project', JSON.stringify(projectData));
+      sessionStorage.setItem('phaseflow_project_id', savedProject.id);
+      sessionStorage.setItem('phaseflow_profiles', profiles);
+      
+      toast({
+        title: "프로젝트 분석 완료!",
+        description: `${projectData.phases?.length || 0}개의 Phase가 생성되었습니다.`,
       });
 
-      if (error) throw error;
-
-      if (data) {
-        // Store project data in sessionStorage for Dashboard to use
-        sessionStorage.setItem('phaseflow_project', JSON.stringify(data));
-        sessionStorage.setItem('phaseflow_profiles', profiles);
-        
-        toast({
-          title: "Project analysis complete!",
-          description: `${data.phases?.length || 0} phases generated.`,
-        });
-
-        // Navigate to dashboard
-        navigate('/dashboard');
-      }
+      // Navigate to dashboard
+      navigate('/dashboard');
     } catch (error) {
-      if (import.meta.env.DEV) {
-        console.error("Error analyzing project:", error);
-      }
+      console.error("Error analyzing project:", error);
       toast({
-        title: "Error occurred",
-        description: error instanceof Error ? error.message : "An error occurred during analysis.",
+        title: "오류 발생",
+        description: error instanceof Error ? error.message : "분석 중 오류가 발생했습니다.",
         variant: "destructive",
       });
     } finally {

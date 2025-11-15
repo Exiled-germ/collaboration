@@ -9,7 +9,6 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  base: "/phaseflow/", // GitHub 레포지토리 이름으로 변경
   build: {
     outDir: "dist",
     sourcemap: false,
